@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2f5;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .add-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .add-form input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2 style="margin: 0;">Manage Books</h2>
+                <small>Welcome, {{ user['username'] }}</small>
+            </div>
+            <div>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+
+        <div class="box">
+            <h3>Add New Book</h3>
+            <form method="post" action="{{ url_for('admin_books_add') }}" class="add-form">
+                <input type="text" name="title" placeholder="Book Title" required>
+                <input type="text" name="author" placeholder="Author Name" required>
+                <input type="number" name="available" value="1" min="0" max="1" style="width: 80px;">
+                <button type="submit" class="btn">Add Book</button>
+            </form>
+
+            <h3>All Books</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if books %}
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book['id'] }}</td>
+                        <td>{{ book['title'] }}</td>
+                        <td>{{ book['author'] }}</td>
+                        <td>
+                            {% if book['available'] == 1 %}
+                            <span class="badge badge-success">Available</span>
+                            {% else %}
+                            <span class="badge badge-danger">Issued</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin_books_delete', id=book['id']) }}"
+                                style="display: inline;">
+                                <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Delete this book?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No books available</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
